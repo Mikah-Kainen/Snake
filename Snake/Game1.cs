@@ -11,6 +11,7 @@ namespace Snake
 
         Snake _snake;
 
+        Rectangle _screen => GraphicsDevice.Viewport.Bounds;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -21,7 +22,6 @@ namespace Snake
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -29,6 +29,9 @@ namespace Snake
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            _snake = new Snake(CreatePixel(GraphicsDevice), Color.Red, new Vector2(50, 50), 1000);
+            _snake.AddPart();
+            _snake.AddPart();
             // TODO: use this.Content to load your game content here
         }
 
@@ -36,6 +39,12 @@ namespace Snake
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            if (_snake.length < 4)
+            {
+                _snake.AddPart();
+            }
+            _snake.Update(gameTime, _screen);
 
             // TODO: Add your update logic here
 
@@ -45,9 +54,12 @@ namespace Snake
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            _spriteBatch.Begin();
+
+            _snake.Draw(_spriteBatch);
 
             // TODO: Add your drawing code here
-
+            _spriteBatch.End();
             base.Draw(gameTime);
         }
 
