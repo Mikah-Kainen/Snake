@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using System.Collections.Generic;
+
 namespace Snake
 {
     public class Game1 : Game
@@ -10,13 +12,14 @@ namespace Snake
         private SpriteBatch _spriteBatch;
 
         Snake _snake;
-
+        private bool _endGame;
         Rectangle _screen => GraphicsDevice.Viewport.Bounds;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _endGame = false;
         }
 
         protected override void Initialize()
@@ -29,7 +32,15 @@ namespace Snake
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _snake = new Snake(CreatePixel(GraphicsDevice), Color.Red, new Vector2(50, 50), 1000);
+            Dictionary<Keys, Direction> directionDictionary = new Dictionary<Keys, Direction>()
+            {
+                [Keys.Up] = Direction.Up,
+                [Keys.Left] = Direction.Left,
+                [Keys.Down] = Direction.Down,
+                [Keys.Right] = Direction.Right,
+            };
+
+            _snake = new Snake(CreatePixel(GraphicsDevice), Color.Red, new Vector2(50, 50), 1000, directionDictionary);
             _snake.AddPart();
             _snake.AddPart();
             // TODO: use this.Content to load your game content here
@@ -37,14 +48,14 @@ namespace Snake
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || _endGame)
                 Exit();
 
-            if (_snake.length < 4)
+            if (_snake.snakeParts.Count < 4)
             {
                 _snake.AddPart();
             }
-            _snake.Update(gameTime, _screen);
+            _endGame = _snake.Update(gameTime, _screen);
 
             // TODO: Add your update logic here
 

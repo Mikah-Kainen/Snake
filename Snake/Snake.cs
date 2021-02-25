@@ -12,97 +12,106 @@ namespace Snake
     {
         Texture2D _tex;
         Color _tint;
-        Vector2 _headPos;
         Vector2 _partSize;
-        public int length;
-        List<Vector2> _snakeParts;
+        public List<SnakePart> snakeParts;
         bool _addPart;
         int _counter;
         int _updateTime;
+        Dictionary<Keys, Direction> _directions;
+        Queue<Keys> _pressedKeys;
+        Keys _lastKeyPressed;
 
-        public int direction;
+
+        public Direction direction;
         
-        public Snake(Texture2D tex, Color tint, Vector2 partSize, int updateTime)
+        public Snake(Texture2D tex, Color tint, Vector2 partSize, int updateTime, Dictionary<Keys, Direction> directions)
         {
             _tex = tex;
             _tint = tint;
-            _headPos = new Vector2(250, 250);
             _partSize = partSize;
-            length = 1;
-            direction = 3;
+            direction = Direction.None;
             _counter = 0;
             _updateTime = updateTime / 16;
-            _snakeParts = new List<Vector2>();
-            _snakeParts.Add(_headPos);
+            snakeParts = new List<SnakePart>();
+            snakeParts.Add(new SnakePart(250, 250));
             _addPart = false;
+            _pressedKeys = new Queue<Keys>();
+            _lastKeyPressed = Keys.None;
+
+            _directions = directions;
         }
 
         public void AddPart()
         {
-            if (!_addPart)
-            {
-                length++;
-            }
             _addPart = true;
         }
-        public void Update(GameTime gameTime, Rectangle screen)
+        public bool Update(GameTime gameTime, Rectangle screen)
         {
             if(_counter > _updateTime)
             {
                 if(_addPart)
                 {
                     _addPart = false;
-                    _snakeParts.Add(new Vector2(0,0));
+                    snakeParts.Add(new SnakePart(0, 0));
                 }
-                for (int i = _snakeParts.Count - 1; i > 0; i--)
+                for (int i = snakeParts.Count - 1; i > 0; i--)
                 {
-                    _snakeParts[i] = _snakeParts[i - 1];
+                    snakeParts[i]._loc = snakeParts[i - 1]._loc;
+                }
+
+                if (_pressedKeys.Count > 0)
+                {
+                    direction = _directions[_pressedKeys.Dequeue()];
                 }
 
                 switch (direction)
                 {
-                    case 1:
-                        _headPos.Y -= _partSize.Y;
+                    case Direction.Up:
+                        snakeParts[0]._loc.Y -= _partSize.Y;
                         break;
 
-                    case 2:
-                        _headPos.X -= _partSize.X;
+                    case Direction.Left:
+                        snakeParts[0]._loc.X -= _partSize.X;
                         break;
 
-                    case 3:
-                        _headPos.Y += _partSize.Y;
+                    case Direction.Down:
+                        snakeParts[0]._loc.Y += _partSize.Y;
                         break;
 
-                    case 4:
-                        _headPos.X += _partSize.X;
+                    case Direction.Right:
+                        snakeParts[0]._loc.X += _partSize.X;
                         break;
+
                 }
-                _snakeParts[0] = _headPos;
                 _counter = 0;
+
+                if (snakeParts[0].X + _partSize.X > screen.Right || snakeParts[0].X < screen.Left || snakeParts[0].Y + _partSize.Y > screen.Bottom || snakeParts[0].Y < screen.Top)
+                {
+                    return true;
+                }
             }
             KeyboardState ks = Keyboard.GetState();
-            if (ks.IsKeyDown(Keys.Up))
+
+            //store get pressed keys in an array
+            //foreach through that array and if the directionary does not contain the key, then continune
+            //otherwise set direction to whatever dictionary[item] is
+
+            var input = ks.GetPressedKeys();
+            foreach(Keys key in input)
             {
-                direction = 1;
+                if (_directions.ContainsKey(key) && key != _lastKeyPressed)
+                {
+                    _lastKeyPressed = key;
+                    _pressedKeys.Enqueue(key);
+                }
             }
-            else if (ks.IsKeyDown(Keys.Left))
-            {
-                direction = 2;
-            }
-            else if(ks.IsKeyDown(Keys.Down))
-            {
-                direction = 3;
-            }
-            else if(ks.IsKeyDown(Keys.Right))
-            {
-                direction = 4;
-            }
+            return false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             _counter++;
-            foreach(Vector2 snake in _snakeParts)
+            foreach(SnakePart snake in snakeParts)
             {
                 spriteBatch.Draw(_tex, new Rectangle((int)snake.X, (int)snake.Y, (int)_partSize.X, (int)_partSize.Y), _tint);
             }
