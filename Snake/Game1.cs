@@ -40,7 +40,7 @@ namespace Snake
                 [Keys.Right] = Direction.Right,
             };
 
-            _snake = new Snake(CreatePixel(GraphicsDevice), Color.Red, new Vector2(50, 50), 1000, directionDictionary);
+            _snake = new Snake(CreatePixel(GraphicsDevice), Color.Red, new Vector2(50, 50), 300, directionDictionary);
             _snake.AddPart();
             _snake.AddPart();
             // TODO: use this.Content to load your game content here
@@ -51,7 +51,7 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || _endGame)
                 Exit();
 
-            if (_snake.snakeParts.Count < 4)
+            if (_snake.snakeParts.Count < 8)
             {
                 _snake.AddPart();
             }

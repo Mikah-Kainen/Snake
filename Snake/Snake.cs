@@ -13,7 +13,7 @@ namespace Snake
         Texture2D _tex;
         Color _tint;
         Vector2 _partSize;
-        public List<SnakePart> snakeParts;
+        public CircularLinked<SnakePart> snakeParts;
         bool _addPart;
         int _counter;
         int _updateTime;
@@ -32,8 +32,8 @@ namespace Snake
             direction = Direction.None;
             _counter = 0;
             _updateTime = updateTime / 16;
-            snakeParts = new List<SnakePart>();
-            snakeParts.Add(new SnakePart(250, 250));
+            snakeParts = new CircularLinked<SnakePart>();
+            snakeParts.Add(new SnakePart(250, 250, _partSize));
             _addPart = false;
             _pressedKeys = new Queue<Keys>();
             _lastKeyPressed = Keys.None;
@@ -49,37 +49,36 @@ namespace Snake
         {
             if(_counter > _updateTime)
             {
-                if(_addPart)
-                {
-                    _addPart = false;
-                    snakeParts.Add(new SnakePart(0, 0));
-                }
-                for (int i = snakeParts.Count - 1; i > 0; i--)
-                {
-                    snakeParts[i]._loc = snakeParts[i - 1]._loc;
-                }
-
                 if (_pressedKeys.Count > 0)
                 {
                     direction = _directions[_pressedKeys.Dequeue()];
+                }
+                if (_addPart && direction != Direction.None)
+                {
+                    _addPart = false;
+                    snakeParts.Add(new SnakePart(0, 0, _partSize));
+                }
+                for (int i = snakeParts.Count - 1; i > 0; i--)
+                {
+                    snakeParts[i].Loc = snakeParts[i - 1].Loc;
                 }
 
                 switch (direction)
                 {
                     case Direction.Up:
-                        snakeParts[0]._loc.Y -= _partSize.Y;
+                        snakeParts[0].Loc.Y -= _partSize.Y;
                         break;
 
                     case Direction.Left:
-                        snakeParts[0]._loc.X -= _partSize.X;
+                        snakeParts[0].Loc.X -= _partSize.X;
                         break;
 
                     case Direction.Down:
-                        snakeParts[0]._loc.Y += _partSize.Y;
+                        snakeParts[0].Loc.Y += _partSize.Y;
                         break;
 
                     case Direction.Right:
-                        snakeParts[0]._loc.X += _partSize.X;
+                        snakeParts[0].Loc.X += _partSize.X;
                         break;
 
                 }
@@ -88,6 +87,13 @@ namespace Snake
                 if (snakeParts[0].X + _partSize.X > screen.Right || snakeParts[0].X < screen.Left || snakeParts[0].Y + _partSize.Y > screen.Bottom || snakeParts[0].Y < screen.Top)
                 {
                     return true;
+                }
+                for(int i = 1; i < snakeParts.Count; i ++)
+                {
+                    if(snakeParts[0].HitBox.Intersects(snakeParts[i].HitBox))
+                    {
+                        return true;
+                    }
                 }
             }
             KeyboardState ks = Keyboard.GetState();
