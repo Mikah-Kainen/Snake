@@ -11,6 +11,7 @@ namespace Snake
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private List<Food> _foods;
         Snake _snake;
         private bool _endGame;
         Rectangle _screen => GraphicsDevice.Viewport.Bounds;
@@ -25,6 +26,7 @@ namespace Snake
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _foods = new List<Food>();
             base.Initialize();
         }
 
@@ -43,6 +45,11 @@ namespace Snake
             _snake = new Snake(CreatePixel(GraphicsDevice), Color.Red, new Vector2(50, 50), 300, directionDictionary);
             _snake.AddPart();
             _snake.AddPart();
+
+            _foods.Add(new Food(CreatePixel(GraphicsDevice), Color.Black, new Vector2(25,25), _screen));
+            //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.DarkBlue, new Vector2(25, 25), _screen));
+            //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.GreenYellow, new Vector2(25, 25), _screen));
+            //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.PaleGoldenrod, new Vector2(25, 25), _screen));
             // TODO: use this.Content to load your game content here
         }
 
@@ -57,6 +64,11 @@ namespace Snake
             }
             _endGame = _snake.Update(gameTime, _screen);
 
+            foreach(Food food in _foods)
+            {
+                food.Update();
+            }
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -68,6 +80,10 @@ namespace Snake
             _spriteBatch.Begin();
 
             _snake.Draw(_spriteBatch);
+            foreach (Food food in _foods)
+            {
+                food.Draw(_spriteBatch);
+            }
 
             // TODO: Add your drawing code here
             _spriteBatch.End();
