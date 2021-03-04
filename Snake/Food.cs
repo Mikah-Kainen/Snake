@@ -28,11 +28,8 @@ namespace Snake
             int xParts = (int)(screen.Right / size.X);
             int yParts = (int)(screen.Bottom / size.Y);
 
-            //_pos.X = size.X * gen.Next(0, xParts);
-            //_pos.Y = size.Y * gen.Next(0, yParts);
-
-            _pos.X = 500;
-            _pos.Y = 200;
+            _pos.X = size.X * gen.Next(0, xParts);
+            _pos.Y = size.Y * gen.Next(0, yParts);
         }
         public void Update()
         {

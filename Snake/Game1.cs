@@ -11,7 +11,7 @@ namespace Snake
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private List<Food> _foods;
+        private Food _food;
         Snake _snake;
         private bool _endGame;
         Rectangle _screen => GraphicsDevice.Viewport.Bounds;
@@ -26,7 +26,9 @@ namespace Snake
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _foods = new List<Food>();
+            _graphics.PreferredBackBufferWidth = 1000;
+            _graphics.PreferredBackBufferHeight = 800;
+            _graphics.ApplyChanges();
             base.Initialize();
         }
 
@@ -43,10 +45,8 @@ namespace Snake
             };
 
             _snake = new Snake(CreatePixel(GraphicsDevice), Color.Red, new Vector2(50, 50), 300, directionDictionary);
-            _snake.AddPart();
-            _snake.AddPart();
 
-            _foods.Add(new Food(CreatePixel(GraphicsDevice), Color.Black, new Vector2(25,25), _screen));
+            _food = new Food(CreatePixel(GraphicsDevice), Color.Black, new Vector2(25,25), _screen);
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.DarkBlue, new Vector2(25, 25), _screen));
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.GreenYellow, new Vector2(25, 25), _screen));
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.PaleGoldenrod, new Vector2(25, 25), _screen));
@@ -58,16 +58,14 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || _endGame)
                 Exit();
 
-            if (_snake.snakeParts.Count < 8)
+            _endGame = _snake.Update(gameTime, _screen);
+            if(_snake.snakeParts[0].HitBox.Intersects(_food.HitBox))
             {
+                _food = new Food(CreatePixel(GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
                 _snake.AddPart();
             }
-            _endGame = _snake.Update(gameTime, _screen);
 
-            foreach(Food food in _foods)
-            {
-                food.Update();
-            }
+            _food.Update();
 
             // TODO: Add your update logic here
 
@@ -80,10 +78,7 @@ namespace Snake
             _spriteBatch.Begin();
 
             _snake.Draw(_spriteBatch);
-            foreach (Food food in _foods)
-            {
-                food.Draw(_spriteBatch);
-            }
+            _food.Draw(_spriteBatch);
 
             // TODO: Add your drawing code here
             _spriteBatch.End();

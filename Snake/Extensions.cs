@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using System;
@@ -16,7 +15,7 @@ namespace Snake
             //sprite.Draw(tex, hitBox, tint);
             Vector2 origin = new Vector2(hitBox.Width / 2, hitBox.Height / 2);
             Console.WriteLine(origin);
-            sprite.Draw(tex, hitBox, null, tint, rotation, origin, SpriteEffects.None, 1.0f);
+            sprite.Draw(tex, hitBox, null, tint, rotation, new Vector2(0,0), SpriteEffects.None, 1.0f);
         }
     }
 }
