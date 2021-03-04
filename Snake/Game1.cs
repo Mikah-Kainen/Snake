@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using Snake.ScreenStuff;
+
 using System.Collections.Generic;
 
 namespace Snake
@@ -11,16 +13,14 @@ namespace Snake
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private Food _food;
-        Snake _snake;
-        private bool _endGame;
-        Rectangle _screen => GraphicsDevice.Viewport.Bounds;
+        Dictionary<Screens, Screen> _screenManager;
+        Screens _currentScreen;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _endGame = false;
         }
 
         protected override void Initialize()
@@ -36,17 +36,15 @@ namespace Snake
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Dictionary<Keys, Direction> directionDictionary = new Dictionary<Keys, Direction>()
-            {
-                [Keys.Up] = Direction.Up,
-                [Keys.Left] = Direction.Left,
-                [Keys.Down] = Direction.Down,
-                [Keys.Right] = Direction.Right,
-            };
+            _screenManager = new Dictionary<Screens, Screen>();
+            _screenManager.Add(Screens.Game, new GameScreen(_graphics, 1000, 800, Content));
+            _screenManager.Add(Screens.Test, new TestScreen(_graphics, 1000, 800, Content));
 
-            _snake = new Snake(CreatePixel(GraphicsDevice), Color.Red, new Vector2(50, 50), 300, directionDictionary);
 
-            _food = new Food(CreatePixel(GraphicsDevice), Color.Black, new Vector2(25,25), _screen);
+            _currentScreen = Screens.Test;
+
+            _screenManager[_currentScreen].Load();
+
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.DarkBlue, new Vector2(25, 25), _screen));
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.GreenYellow, new Vector2(25, 25), _screen));
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.PaleGoldenrod, new Vector2(25, 25), _screen));
@@ -55,17 +53,10 @@ namespace Snake
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || _endGame)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _endGame = _snake.Update(gameTime, _screen);
-            if(_snake.snakeParts[0].HitBox.Intersects(_food.HitBox))
-            {
-                _food = new Food(CreatePixel(GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
-                _snake.AddPart();
-            }
-
-            _food.Update();
+            _screenManager[_currentScreen].Update(gameTime);
 
             // TODO: Add your update logic here
 
@@ -74,24 +65,10 @@ namespace Snake
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin();
-
-            _snake.Draw(_spriteBatch);
-            _food.Draw(_spriteBatch);
-
-            // TODO: Add your drawing code here
-            _spriteBatch.End();
+            _screenManager[_currentScreen].Draw(_spriteBatch);
             base.Draw(gameTime);
         }
 
-        private Texture2D CreatePixel(GraphicsDevice device)
-        {
-            Texture2D texture = new Texture2D(device, 1, 1);
 
-            texture.SetData(new Color[] { Color.White });
-
-            return texture;
-        }
     }
 }

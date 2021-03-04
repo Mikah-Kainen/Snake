@@ -12,4 +12,10 @@ namespace Snake
         Right,
         None,
     }
+
+    public enum Screens
+    {
+        Game,
+        Test,
+    }
 }

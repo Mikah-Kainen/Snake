@@ -31,6 +31,14 @@ namespace Snake
             _pos.X = size.X * gen.Next(0, xParts);
             _pos.Y = size.Y * gen.Next(0, yParts);
         }
+
+        public Food(Texture2D tex, Color tint, Vector2 size, Rectangle screen, Vector2 pos)
+        {
+            _tex = tex;
+            _tint = tint;
+            _size = size;
+            _pos = pos;
+        }
         public void Update()
         {
             _rotation -= (float)0.1;
