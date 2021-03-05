@@ -13,14 +13,14 @@ namespace Snake.ScreenStuff
     {
         private Food _food;
         Snake _snake;
-        Rectangle _screen => GraphicsDevice.GraphicsDevice.Viewport.Bounds;
+        Rectangle _screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
-        public GameScreen(GraphicsDeviceManager graphics, int xBound, int yBound, ContentManager content)
-            : base(graphics, content)
+        public GameScreen(GraphicsDeviceManager graphics, int xBound, int yBound, ContentManager content, ScreenManager screenManager)
+            : base(graphics, content, screenManager)
         {
-            GraphicsDevice.PreferredBackBufferWidth = xBound;
-            GraphicsDevice.PreferredBackBufferHeight = yBound;
-            GraphicsDevice.ApplyChanges();
+            GraphicsDeviceManager.PreferredBackBufferWidth = xBound;
+            GraphicsDeviceManager.PreferredBackBufferHeight = yBound;
+            GraphicsDeviceManager.ApplyChanges();
 
         }
 
@@ -34,17 +34,21 @@ namespace Snake.ScreenStuff
                 [Keys.Right] = Direction.Right,
             };
 
-            _snake = new Snake(CreatePixel(GraphicsDevice.GraphicsDevice), Color.Red, new Vector2(50, 50), 300, directionDictionary);
+            _snake = new Snake(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Red, new Vector2(50, 50), 300, directionDictionary, _screen);
 
-            _food = new Food(CreatePixel(GraphicsDevice.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
+            _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
         }
 
         public override void Update(GameTime gameTime)
         {
-            _snake.Update(gameTime, _screen);
+            _snake.Update(gameTime);
+            if(didLose())
+            {
+                ScreenManager.SetScreen(Screens.Replay);
+            }
             if (_snake.snakeParts[0].HitBox.Intersects(_food.HitBox))
             {
-                _food = new Food(CreatePixel(GraphicsDevice.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
+                _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
                 _snake.AddPart();
             }
 
@@ -53,7 +57,6 @@ namespace Snake.ScreenStuff
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            GraphicsDevice.GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
 
 
@@ -70,6 +73,22 @@ namespace Snake.ScreenStuff
             texture.SetData(new Color[] { Color.White });
 
             return texture;
+        }
+
+        private bool didLose()
+        {
+            if (_snake.snakeParts[0].X + _snake.partSize.X > _screen.Right || _snake.snakeParts[0].X < _screen.Left || _snake.snakeParts[0].Y + _snake.partSize.Y > _screen.Bottom || _snake.snakeParts[0].Y < _screen.Top)
+            {
+                return true;
+            }
+            for (int i = 1; i < _snake.snakeParts.Count; i++)
+            {
+                if (_snake.snakeParts[0].HitBox.Intersects(_snake.snakeParts[i].HitBox))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Snake
     {
         Texture2D _tex;
         Color _tint;
-        Vector2 _partSize;
+        public Vector2 partSize;
         public CircularLinked<SnakePart> snakeParts;
         bool _addPart;
         int _counter;
@@ -20,32 +20,33 @@ namespace Snake
         Dictionary<Keys, Direction> _directions;
         Queue<Keys> _pressedKeys;
         Keys _lastKeyPressed;
-
+        Rectangle _screen;
 
         public Direction direction;
         
-        public Snake(Texture2D tex, Color tint, Vector2 partSize, int updateTime, Dictionary<Keys, Direction> directions)
+        public Snake(Texture2D tex, Color tint, Vector2 PartSize, int updateTime, Dictionary<Keys, Direction> directions, Rectangle screen)
         {
             _tex = tex;
             _tint = tint;
-            _partSize = partSize;
+            partSize = PartSize;
             direction = Direction.None;
             _counter = 0;
             _updateTime = updateTime / 16;
             snakeParts = new CircularLinked<SnakePart>();
-            snakeParts.Add(new SnakePart(250, 250, _partSize));
+            snakeParts.Add(new SnakePart(250, 250, partSize));
             _addPart = false;
             _pressedKeys = new Queue<Keys>();
             _lastKeyPressed = Keys.None;
 
             _directions = directions;
+            _screen = screen;
         }
 
         public void AddPart()
         {
             _addPart = true;
         }
-        public bool Update(GameTime gameTime, Rectangle screen)
+        public void Update(GameTime gameTime)
         {
             if(_counter > _updateTime)
             {
@@ -56,7 +57,7 @@ namespace Snake
                 if (_addPart && direction != Direction.None)
                 {
                     _addPart = false;
-                    snakeParts.Add(new SnakePart(0, 0, _partSize));
+                    snakeParts.Add(new SnakePart(0, 0, partSize));
                 }
                 for (int i = snakeParts.Count - 1; i > 0; i--)
                 {
@@ -66,35 +67,23 @@ namespace Snake
                 switch (direction)
                 {
                     case Direction.Up:
-                        snakeParts[0].Loc.Y -= _partSize.Y;
+                        snakeParts[0].Loc.Y -= partSize.Y;
                         break;
 
                     case Direction.Left:
-                        snakeParts[0].Loc.X -= _partSize.X;
+                        snakeParts[0].Loc.X -= partSize.X;
                         break;
 
                     case Direction.Down:
-                        snakeParts[0].Loc.Y += _partSize.Y;
+                        snakeParts[0].Loc.Y += partSize.Y;
                         break;
 
                     case Direction.Right:
-                        snakeParts[0].Loc.X += _partSize.X;
+                        snakeParts[0].Loc.X += partSize.X;
                         break;
 
                 }
                 _counter = 0;
-
-                if (snakeParts[0].X + _partSize.X > screen.Right || snakeParts[0].X < screen.Left || snakeParts[0].Y + _partSize.Y > screen.Bottom || snakeParts[0].Y < screen.Top)
-                {
-                    return true;
-                }
-                for(int i = 1; i < snakeParts.Count; i ++)
-                {
-                    if(snakeParts[0].HitBox.Intersects(snakeParts[i].HitBox))
-                    {
-                        return true;
-                    }
-                }
             }
             KeyboardState ks = Keyboard.GetState();
 
@@ -111,7 +100,6 @@ namespace Snake
                     _pressedKeys.Enqueue(key);
                 }
             }
-            return false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -119,7 +107,7 @@ namespace Snake
             _counter++;
             foreach(SnakePart snake in snakeParts)
             {
-                spriteBatch.Draw(_tex, new Rectangle((int)snake.X, (int)snake.Y, (int)_partSize.X, (int)_partSize.Y), _tint);
+                spriteBatch.Draw(_tex, new Rectangle((int)snake.X, (int)snake.Y, (int)partSize.X, (int)partSize.Y), _tint);
             }
         }
     }

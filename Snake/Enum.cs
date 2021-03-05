@@ -17,5 +17,6 @@ namespace Snake
     {
         Game,
         Test,
+        Replay,
     }
 }

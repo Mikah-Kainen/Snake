@@ -11,12 +11,16 @@ namespace Snake.ScreenStuff
     public abstract class Screen
     {
         protected ContentManager Content { get; private set; }
-        protected GraphicsDeviceManager GraphicsDevice { get; private set; }
+        protected GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 
-        public Screen(GraphicsDeviceManager graphicsDevice, ContentManager content)
+        protected ScreenManager ScreenManager { get; private set; }
+
+        public Screen(GraphicsDeviceManager graphicsDevice, ContentManager content, ScreenManager screenManager)
         {
-            GraphicsDevice = graphicsDevice;
+            GraphicsDeviceManager = graphicsDevice;
             Content = content;
+            ScreenManager = screenManager;
+
         }
         public abstract void Load();
         public abstract void Update(GameTime gameTime);

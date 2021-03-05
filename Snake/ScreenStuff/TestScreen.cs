@@ -11,19 +11,19 @@ namespace Snake.ScreenStuff
     class TestScreen : Screen
     {
         Food food;
-        Rectangle screen => GraphicsDevice.GraphicsDevice.Viewport.Bounds;
+        Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
-        public TestScreen(GraphicsDeviceManager graphics, int xBound, int yBound, ContentManager content)
-            : base(graphics, content)
+        public TestScreen(GraphicsDeviceManager graphics, int xBound, int yBound, ContentManager content, ScreenManager screenManager)
+            : base(graphics, content, screenManager)
         {
-            GraphicsDevice.PreferredBackBufferWidth = xBound;
-            GraphicsDevice.PreferredBackBufferHeight = yBound;
-            GraphicsDevice.ApplyChanges();
+            GraphicsDeviceManager.PreferredBackBufferWidth = xBound;
+            GraphicsDeviceManager.PreferredBackBufferHeight = yBound;
+            GraphicsDeviceManager.ApplyChanges();
         }
 
         public override void Load()
         {
-            food = new Food(CreatePixel(GraphicsDevice.GraphicsDevice), Color.Black, new Vector2(25,25), screen, new Vector2(500, 400));
+            food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25,25), screen, new Vector2(500, 400));
         }
 
         public override void Update(GameTime gameTime)
@@ -33,7 +33,6 @@ namespace Snake.ScreenStuff
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            GraphicsDevice.GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             food.Draw(spriteBatch);
 

@@ -12,15 +12,14 @@ namespace Snake
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
-        Dictionary<Screens, Screen> _screenManager;
-        Screens _currentScreen;
+        private ScreenManager _screenManager;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _screenManager = new ScreenManager();
         }
 
         protected override void Initialize()
@@ -36,14 +35,13 @@ namespace Snake
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _screenManager = new Dictionary<Screens, Screen>();
-            _screenManager.Add(Screens.Game, new GameScreen(_graphics, 1000, 800, Content));
-            _screenManager.Add(Screens.Test, new TestScreen(_graphics, 1000, 800, Content));
+            _screenManager.AddScreen(Screens.Game, new GameScreen(_graphics, 1000, 800, Content, _screenManager));
+            _screenManager.AddScreen(Screens.Test, new TestScreen(_graphics, 1000, 800, Content, _screenManager));
+            _screenManager.AddScreen(Screens.Replay, new ReplayScreen(_graphics, 1000, 800, Content, _screenManager));
 
+            _screenManager.SetScreen(Screens.Game);
 
-            _currentScreen = Screens.Test;
-
-            _screenManager[_currentScreen].Load();
+            _screenManager.CurrentScreen.Load();
 
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.DarkBlue, new Vector2(25, 25), _screen));
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.GreenYellow, new Vector2(25, 25), _screen));
@@ -56,7 +54,7 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _screenManager[_currentScreen].Update(gameTime);
+            _screenManager.Update(gameTime);
 
             // TODO: Add your update logic here
 
@@ -65,7 +63,9 @@ namespace Snake
 
         protected override void Draw(GameTime gameTime)
         {
-            _screenManager[_currentScreen].Draw(_spriteBatch);
+            //Clear
+            _graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+            _screenManager.Draw(_spriteBatch);
             base.Draw(gameTime);
         }
 
