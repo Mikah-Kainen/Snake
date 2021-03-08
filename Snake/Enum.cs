@@ -18,5 +18,7 @@ namespace Snake
         Game,
         Test,
         Replay,
+        Settings,
+        Pause,
     }
 }

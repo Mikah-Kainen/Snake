@@ -18,27 +18,22 @@ namespace Snake
         public Rectangle HitBox => new Rectangle((int)_pos.X, (int)_pos.Y, (int)_size.X, (int)_size.Y);
 
         Random gen;
-        public Food(Texture2D tex, Color tint, Vector2 size, Rectangle screen)
+        public Food(Texture2D tex, Color tint, Vector2 size, Rectangle bounds, Vector2 snakeSize)
         {
             gen = new Random();
             _tex = tex;
             _tint = tint;
             _size = size;
 
-            int xParts = (int)(screen.Right / size.X);
-            int yParts = (int)(screen.Bottom / size.Y);
+            int xParts = (int)(bounds.Right / snakeSize.X);
+            int yParts = (int)(bounds.Bottom / snakeSize.Y);
 
-            _pos.X = size.X * gen.Next(0, xParts);
-            _pos.Y = size.Y * gen.Next(0, yParts);
+            _pos.X = (int)snakeSize.X * gen.Next(0, xParts);
+            _pos.X += (int)snakeSize.X / 2;
+            _pos.Y = (int)snakeSize.Y * gen.Next(0, yParts);
+            _pos.Y += (int)snakeSize.Y / 2;
         }
 
-        public Food(Texture2D tex, Color tint, Vector2 size, Rectangle screen, Vector2 pos)
-        {
-            _tex = tex;
-            _tint = tint;
-            _size = size;
-            _pos = pos;
-        }
         public void Update()
         {
             _rotation -= (float)0.1;

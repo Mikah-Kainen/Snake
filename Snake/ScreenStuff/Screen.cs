@@ -26,7 +26,7 @@ namespace Snake.ScreenStuff
         public abstract void Update(GameTime gameTime);
         public abstract void Draw(SpriteBatch spriteBatch);
 
-        //public abstract void Reset();
+        public abstract void Reset();
     }
 }
 

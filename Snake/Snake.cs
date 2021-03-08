@@ -12,7 +12,8 @@ namespace Snake
     {
         Texture2D _tex;
         Color _tint;
-        public Vector2 partSize;
+        public Vector2 PartSize { get; private set; }
+
         public CircularLinked<SnakePart> snakeParts;
         bool _addPart;
         int _counter;
@@ -24,16 +25,16 @@ namespace Snake
 
         public Direction direction;
         
-        public Snake(Texture2D tex, Color tint, Vector2 PartSize, int updateTime, Dictionary<Keys, Direction> directions, Rectangle screen)
+        public Snake(Texture2D tex, Color tint, Vector2 partSize, int updateTime, Dictionary<Keys, Direction> directions, Rectangle screen)
         {
             _tex = tex;
             _tint = tint;
-            partSize = PartSize;
+            PartSize = partSize;
             direction = Direction.None;
             _counter = 0;
             _updateTime = updateTime / 16;
             snakeParts = new CircularLinked<SnakePart>();
-            snakeParts.Add(new SnakePart(250, 250, partSize));
+            snakeParts.Add(new SnakePart(250, 250, partSize, this));
             _addPart = false;
             _pressedKeys = new Queue<Keys>();
             _lastKeyPressed = Keys.None;
@@ -57,7 +58,7 @@ namespace Snake
                 if (_addPart && direction != Direction.None)
                 {
                     _addPart = false;
-                    snakeParts.Add(new SnakePart(0, 0, partSize));
+                    snakeParts.Add(new SnakePart(0, 0, PartSize, this));
                 }
                 for (int i = snakeParts.Count - 1; i > 0; i--)
                 {
@@ -67,19 +68,19 @@ namespace Snake
                 switch (direction)
                 {
                     case Direction.Up:
-                        snakeParts[0].Loc.Y -= partSize.Y;
+                        snakeParts[0].Loc.Y -= PartSize.Y;
                         break;
 
                     case Direction.Left:
-                        snakeParts[0].Loc.X -= partSize.X;
+                        snakeParts[0].Loc.X -= PartSize.X;
                         break;
 
                     case Direction.Down:
-                        snakeParts[0].Loc.Y += partSize.Y;
+                        snakeParts[0].Loc.Y += PartSize.Y;
                         break;
 
                     case Direction.Right:
-                        snakeParts[0].Loc.X += partSize.X;
+                        snakeParts[0].Loc.X += PartSize.X;
                         break;
 
                 }
@@ -107,7 +108,7 @@ namespace Snake
             _counter++;
             foreach(SnakePart snake in snakeParts)
             {
-                spriteBatch.Draw(_tex, new Rectangle((int)snake.X, (int)snake.Y, (int)partSize.X, (int)partSize.Y), _tint);
+                spriteBatch.Draw(_tex, new Rectangle((int)snake.X, (int)snake.Y, (int)PartSize.X, (int)PartSize.Y), _tint);
             }
         }
     }

@@ -33,14 +33,18 @@ namespace Snake.ScreenStuff
                 {
                     ScreenManager.ClearScreens();
                     ScreenManager.SetScreen(Screens.Game);
+                    ScreenManager.CurrentScreen.Reset();
                 }
             }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-
+            ScreenManager.Draw(spriteBatch);
         }
 
+        public override void Reset()
+        {
+        }
     }
 }

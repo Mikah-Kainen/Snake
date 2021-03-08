@@ -47,5 +47,10 @@ namespace Snake.ScreenStuff
 
             return texture;
         }
+
+        public override void Reset()
+        {
+            
+        }
     }
 }

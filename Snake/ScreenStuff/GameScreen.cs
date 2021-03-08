@@ -36,7 +36,7 @@ namespace Snake.ScreenStuff
 
             _snake = new Snake(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Red, new Vector2(50, 50), 100, directionDictionary, _screen);
 
-            _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
+            _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen, _snake.PartSize);
         }
 
         public override void Update(GameTime gameTime)
@@ -48,7 +48,7 @@ namespace Snake.ScreenStuff
             }
             if (_snake.snakeParts[0].HitBox.Intersects(_food.HitBox))
             {
-                _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
+                _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen, _snake.PartSize);
                 _snake.AddPart();
             }
 
@@ -77,7 +77,7 @@ namespace Snake.ScreenStuff
 
         private bool didLose()
         {
-            if (_snake.snakeParts[0].X + _snake.partSize.X > _screen.Right || _snake.snakeParts[0].X < _screen.Left || _snake.snakeParts[0].Y + _snake.partSize.Y > _screen.Bottom || _snake.snakeParts[0].Y < _screen.Top)
+            if (_snake.snakeParts[0].X + _snake.PartSize.X > _screen.Right || _snake.snakeParts[0].X < _screen.Left || _snake.snakeParts[0].Y + _snake.PartSize.Y > _screen.Bottom || _snake.snakeParts[0].Y < _screen.Top)
             {
                 return true;
             }
@@ -89,6 +89,11 @@ namespace Snake.ScreenStuff
                 }
             }
             return false;
+        }
+
+        public override void Reset()
+        {
+            Load();
         }
     }
 }
