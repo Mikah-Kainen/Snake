@@ -11,14 +11,14 @@ namespace Snake.ScreenStuff
     {
         public Screen CurrentScreen { get; private set; }
 
-        Stack<Screen> previousScreens;
+        MyStack<Screen> previousScreens;
 
         Dictionary<Screens, Screen> screenMap;
 
         public ScreenManager()
         {
             CurrentScreen = null;
-            previousScreens = new Stack<Screen>();
+            previousScreens = new MyStack<Screen>();
             screenMap = new Dictionary<Screens, Screen>();
 
         }
@@ -29,7 +29,10 @@ namespace Snake.ScreenStuff
             {
                 return false;
             }
-            previousScreens.Push(CurrentScreen);
+            if (CurrentScreen != null)
+            {
+                previousScreens.Push(CurrentScreen);
+            }
             CurrentScreen = screenMap[nextScreen];
             return true;
         }
@@ -44,6 +47,11 @@ namespace Snake.ScreenStuff
             CurrentScreen = previousScreens.Pop();
         }
 
+        public void ClearScreens()
+        {
+            previousScreens.Clear();
+        }
+
         public void Update(GameTime gameTime)
         {
             CurrentScreen.Update(gameTime);
@@ -51,6 +59,10 @@ namespace Snake.ScreenStuff
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            foreach (Screen screen in previousScreens)
+            {
+                screen.Draw(spriteBatch);
+            }
             CurrentScreen.Draw(spriteBatch);
         }
 

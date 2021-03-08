@@ -34,7 +34,7 @@ namespace Snake.ScreenStuff
                 [Keys.Right] = Direction.Right,
             };
 
-            _snake = new Snake(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Red, new Vector2(50, 50), 300, directionDictionary, _screen);
+            _snake = new Snake(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Red, new Vector2(50, 50), 100, directionDictionary, _screen);
 
             _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen);
         }
