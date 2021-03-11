@@ -13,6 +13,8 @@ namespace Snake.ScreenStuff
         protected ContentManager Content { get; private set; }
         protected GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 
+        public Settings Setting { get; private set; }
+
         protected ScreenManager ScreenManager { get; private set; }
 
         public Screen(GraphicsDeviceManager graphicsDevice, ContentManager content, ScreenManager screenManager)
@@ -20,7 +22,6 @@ namespace Snake.ScreenStuff
             GraphicsDeviceManager = graphicsDevice;
             Content = content;
             ScreenManager = screenManager;
-
         }
         public abstract void Load();
         public abstract void Update(GameTime gameTime);

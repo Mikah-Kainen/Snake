@@ -10,12 +10,16 @@ namespace Snake.ScreenStuff
 {
     class ReplayScreen : Screen
     {
+        private bool didDraw;
+
         public ReplayScreen(GraphicsDeviceManager graphics, int xBound, int yBound, ContentManager content, ScreenManager screenManager)
             : base(graphics, content, screenManager)
         {
             GraphicsDeviceManager.PreferredBackBufferWidth = xBound;
             GraphicsDeviceManager.PreferredBackBufferHeight = yBound;
             GraphicsDeviceManager.ApplyChanges();
+
+            didDraw = false;
         }
 
         public override void Load()
@@ -36,11 +40,17 @@ namespace Snake.ScreenStuff
                     ScreenManager.CurrentScreen.Reset();
                 }
             }
+
+            didDraw = false;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            ScreenManager.Draw(spriteBatch);
+            if (!didDraw)
+            {
+                didDraw = true;
+                ScreenManager.Draw(spriteBatch);
+            }
         }
 
         public override void Reset()

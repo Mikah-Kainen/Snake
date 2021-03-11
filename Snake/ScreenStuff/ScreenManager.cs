@@ -9,25 +9,28 @@ namespace Snake.ScreenStuff
 {
     public class ScreenManager
     {
+
         public Screen CurrentScreen { get; private set; }
 
         MyStack<Screen> previousScreens;
 
         Dictionary<Screens, Screen> screenMap;
 
-        public ScreenManager()
+        public Settings Setting { get; private set; }
+
+        public ScreenManager(Settings setting)
         {
             CurrentScreen = null;
             previousScreens = new MyStack<Screen>();
             screenMap = new Dictionary<Screens, Screen>();
-
+            Setting = setting;
         }
 
         public bool SetScreen(Screens nextScreen)
         {
             if(!screenMap.ContainsKey(nextScreen))
             {
-                return false;
+                throw new Exception("Does not comtain screen");
             }
             if (CurrentScreen != null)
             {

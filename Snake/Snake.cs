@@ -18,26 +18,24 @@ namespace Snake
         bool _addPart;
         int _counter;
         int _updateTime;
-        Dictionary<Keys, Direction> _directions;
-        Queue<Keys> _pressedKeys;
-        Keys _lastKeyPressed;
+        Dictionary<Keys, Directions> _directions;
         Rectangle _screen;
 
-        public Direction direction;
+        public Queue<Keys> pressedKeys;
+        public Directions direction;
         
-        public Snake(Texture2D tex, Color tint, Vector2 partSize, int updateTime, Dictionary<Keys, Direction> directions, Rectangle screen)
+        public Snake(Texture2D tex, Color tint, Vector2 partSize, int updateTime, Dictionary<Keys, Directions> directions, Rectangle screen)
         {
             _tex = tex;
             _tint = tint;
             PartSize = partSize;
-            direction = Direction.None;
+            direction = Directions.None;
             _counter = 0;
             _updateTime = updateTime / 16;
             snakeParts = new CircularLinked<SnakePart>();
             snakeParts.Add(new SnakePart(250, 250, partSize, this));
             _addPart = false;
-            _pressedKeys = new Queue<Keys>();
-            _lastKeyPressed = Keys.None;
+            pressedKeys = new Queue<Keys>();
 
             _directions = directions;
             _screen = screen;
@@ -51,11 +49,11 @@ namespace Snake
         {
             if(_counter > _updateTime)
             {
-                if (_pressedKeys.Count > 0)
+                if (pressedKeys.Count > 0)
                 {
-                    direction = _directions[_pressedKeys.Dequeue()];
+                    direction = _directions[pressedKeys.Dequeue()];
                 }
-                if (_addPart && direction != Direction.None)
+                if (_addPart && direction != Directions.None)
                 {
                     _addPart = false;
                     snakeParts.Add(new SnakePart(0, 0, PartSize, this));
@@ -67,40 +65,26 @@ namespace Snake
 
                 switch (direction)
                 {
-                    case Direction.Up:
+                    case Directions.Up:
                         snakeParts[0].Loc.Y -= PartSize.Y;
                         break;
 
-                    case Direction.Left:
+                    case Directions.Left:
                         snakeParts[0].Loc.X -= PartSize.X;
                         break;
 
-                    case Direction.Down:
+                    case Directions.Down:
                         snakeParts[0].Loc.Y += PartSize.Y;
                         break;
 
-                    case Direction.Right:
+                    case Directions.Right:
                         snakeParts[0].Loc.X += PartSize.X;
                         break;
 
                 }
                 _counter = 0;
             }
-            KeyboardState ks = Keyboard.GetState();
 
-            //store get pressed keys in an array
-            //foreach through that array and if the directionary does not contain the key, then continune
-            //otherwise set direction to whatever dictionary[item] is
-
-            var input = ks.GetPressedKeys();
-            foreach(Keys key in input)
-            {
-                if (_directions.ContainsKey(key) && key != _lastKeyPressed)
-                {
-                    _lastKeyPressed = key;
-                    _pressedKeys.Enqueue(key);
-                }
-            }
         }
 
         public void Draw(SpriteBatch spriteBatch)

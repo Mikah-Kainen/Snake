@@ -15,43 +15,57 @@ namespace Snake.ScreenStuff
         Snake _snake;
         Rectangle _screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
+        List<Keys> pressedKeys;
         public GameScreen(GraphicsDeviceManager graphics, int xBound, int yBound, ContentManager content, ScreenManager screenManager)
             : base(graphics, content, screenManager)
         {
             GraphicsDeviceManager.PreferredBackBufferWidth = xBound;
             GraphicsDeviceManager.PreferredBackBufferHeight = yBound;
             GraphicsDeviceManager.ApplyChanges();
-
         }
 
         public override void Load()
         {
-            Dictionary<Keys, Direction> directionDictionary = new Dictionary<Keys, Direction>()
-            {
-                [Keys.Up] = Direction.Up,
-                [Keys.Left] = Direction.Left,
-                [Keys.Down] = Direction.Down,
-                [Keys.Right] = Direction.Right,
-            };
+            pressedKeys = new List<Keys>();
 
-            _snake = new Snake(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Red, new Vector2(50, 50), 100, directionDictionary, _screen);
+            _snake = new Snake(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Red, new Vector2(50, 50), 100, ScreenManager.Setting.DirectionDictionary, _screen);
 
             _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen, _snake.PartSize);
         }
 
         public override void Update(GameTime gameTime)
         {
+            KeyboardState ks = Keyboard.GetState();
+            var input = ks.GetPressedKeys();
+            foreach(Keys key in input)
+            {
+                if(!pressedKeys.Contains(key) && !_snake.pressedKeys.Contains(key))
+                {
+                    pressedKeys.Add(key);
+                }
+            }
+            while(pressedKeys.Count > 0)
+            {
+                if (ScreenManager.Setting.DirectionDictionary.ContainsKey(pressedKeys[0]))
+                {
+                    _snake.pressedKeys.Enqueue(pressedKeys[0]);
+                }
+                else if (ScreenManager.Setting.CommandDictionary.ContainsKey(pressedKeys[0]))
+                {
+                    ScreenManager.SetScreen(ScreenManager.Setting.CommandDictionary[pressedKeys[0]]);
+                }
+                pressedKeys.Remove(pressedKeys[0]);
+            }
             _snake.Update(gameTime);
             if(didLose())
             {
                 ScreenManager.SetScreen(Screens.Replay);
             }
-            if (_snake.snakeParts[0].HitBox.Intersects(_food.HitBox))
+            else if (_snake.snakeParts[0].HitBox.Intersects(_food.HitBox))
             {
                 _food = new Food(CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Black, new Vector2(25, 25), _screen, _snake.PartSize);
                 _snake.AddPart();
             }
-
             _food.Update();
         }
 

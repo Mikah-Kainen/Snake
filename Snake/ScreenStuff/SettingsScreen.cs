@@ -1,26 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 
 namespace Snake.ScreenStuff
 {
     public class SettingsScreen : Screen
     {
-        public Dictionary<Direction, Keys> Directions { get; private set; }
 
-        public SettingsScreen(GraphicsDeviceManager graphicsDeviceManager, ContentManager content, ScreenManager screenManager, Dictionary<Direction, Keys> directions)
+        public SettingsScreen(GraphicsDeviceManager graphicsDeviceManager, ContentManager content, ScreenManager screenManager)
             : base(graphicsDeviceManager, content, screenManager)
         {
-            Directions = directions;
         }
 
         public override void Load()
         {
-            throw new NotImplementedException();
         }
 
         public override void Update(GameTime gameTime)

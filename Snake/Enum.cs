@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Snake
 {
-    public enum Direction
+    public enum Directions
     {
         Up = 1,
         Left,
@@ -19,6 +19,11 @@ namespace Snake
         Test,
         Replay,
         Settings,
+        Pause,
+    }
+
+    public enum Commands
+    {
         Pause,
     }
 }

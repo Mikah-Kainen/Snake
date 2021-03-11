@@ -14,12 +14,13 @@ namespace Snake
         private SpriteBatch _spriteBatch;
         private ScreenManager _screenManager;
 
+        public Settings Setting = new Settings();
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _screenManager = new ScreenManager();
+            _screenManager = new ScreenManager(Setting);
         }
 
         protected override void Initialize()
@@ -38,9 +39,9 @@ namespace Snake
             _screenManager.AddScreen(Screens.Game, new GameScreen(_graphics, 1000, 800, Content, _screenManager));
             _screenManager.AddScreen(Screens.Test, new TestScreen(_graphics, 1000, 800, Content, _screenManager));
             _screenManager.AddScreen(Screens.Replay, new ReplayScreen(_graphics, 1000, 800, Content, _screenManager));
+            _screenManager.AddScreen(Screens.Pause, new PauseScreen(_graphics, 1000, 800, Content, _screenManager));
 
             _screenManager.SetScreen(Screens.Game);
-
             _screenManager.CurrentScreen.Load();
 
             //_foods.Add(new Food(CreatePixel(GraphicsDevice), Color.DarkBlue, new Vector2(25, 25), _screen));
